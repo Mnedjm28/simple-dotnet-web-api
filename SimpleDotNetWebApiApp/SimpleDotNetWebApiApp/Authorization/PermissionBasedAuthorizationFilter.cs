@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using SimpleDotNetWebApiApp.Data;
+using SimpleDotNetWebApiApp.Data.Models;
 using System.Security.Claims;
 
 namespace SimpleDotNetWebApiApp.Authorization

@@ -18,7 +18,7 @@ namespace SimpleDotNetWebApiApp.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize(Roles = $"{Constants.ADMIN}")]
         public ActionResult Get()
         {
             var configs = new

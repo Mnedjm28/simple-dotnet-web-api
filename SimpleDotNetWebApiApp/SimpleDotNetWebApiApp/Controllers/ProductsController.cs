@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SimpleDotNetWebApiApp.Authorization;
 using SimpleDotNetWebApiApp.Data;
+using SimpleDotNetWebApiApp.Data.Models;
 using SimpleDotNetWebApiApp.Filters;
 using System.Security.Claims;
 
@@ -73,8 +74,7 @@ namespace SimpleDotNetWebApiApp.Controllers
             return Ok();
         }
 
-        [HttpDelete]
-        [Route("{id}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
             var record = await _dbContext.Set<Product>().FirstAsync(p => p.Id == id);

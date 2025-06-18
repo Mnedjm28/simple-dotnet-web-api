@@ -8,6 +8,7 @@ using SimpleDotNetWebApiApp.Data;
 using SimpleDotNetWebApiApp.Filters;
 using SimpleDotNetWebApiApp.Middlewares;
 using System.Text;
+using SimpleDotNetWebApiApp.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -109,6 +110,12 @@ var app = builder.Build();
 //{
 app.UseSwagger();
 app.UseSwaggerUI();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+};
 //}
 
 app.UseHttpsRedirection();

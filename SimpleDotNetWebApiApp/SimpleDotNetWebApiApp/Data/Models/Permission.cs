@@ -1,4 +1,4 @@
-﻿namespace SimpleDotNetWebApiApp.Data
+﻿namespace SimpleDotNetWebApiApp.Data.Models
 {
     public enum Permission
     {

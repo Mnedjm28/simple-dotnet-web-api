@@ -1,4 +1,4 @@
-﻿using SimpleDotNetWebApiApp.Data;
+﻿using SimpleDotNetWebApiApp.Data.Models;
 using System.Security;
 
 namespace SimpleDotNetWebApiApp.Authorization
