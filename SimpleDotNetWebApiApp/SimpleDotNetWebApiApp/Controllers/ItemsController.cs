@@ -31,6 +31,10 @@ namespace SimpleDotNetWebApiApp.Controllers
             return record == null ? NotFound() : Ok(record);
         }
 
+        [HttpGet]
+        [Route("Category/{categoryId}")]
+        public async Task<ActionResult<IEnumerable<Item>>> GetByCategory(int categoryId) => await _dbContext.Set<Item>().Where(o => o.CategoryId == categoryId).ToListAsync();
+
         [HttpPost]
         public async Task<ActionResult<Item>> Create([FromForm] ItemDto item)
         {

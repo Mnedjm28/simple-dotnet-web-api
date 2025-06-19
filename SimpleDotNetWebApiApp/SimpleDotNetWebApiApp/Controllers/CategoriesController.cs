@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SimpleDotNetWebApiApp.Data;
 using SimpleDotNetWebApiApp.Data.Models;
@@ -53,6 +54,24 @@ namespace SimpleDotNetWebApiApp.Controllers
 
             record.Name = category.Name;
             record.Note = category.Note;
+
+            await _dbContext.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> Update([FromRoute] int id, [FromBody] JsonPatchDocument<Category> category)
+        {
+            var record = await _dbContext.Set<Category>().FirstOrDefaultAsync(p => p.Id == id);
+
+            if (record == null)
+            {
+                _logger.LogDebug("Record not found #{id}", id);
+                return NotFound();
+            }
+
+            category.ApplyTo(record);
 
             await _dbContext.SaveChangesAsync();
 

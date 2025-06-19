@@ -12,6 +12,9 @@ using SimpleDotNetWebApiApp.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+#region Configuration
+
 builder.Configuration.AddJsonFile("config.json");
 
 /*
@@ -32,7 +35,18 @@ builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 //builder.Configuration.GetSection("Attachments").Bind(attachmentOptions);
 //builder.Services.AddSingleton(attachmentOptions);
 
-// Add services to the container.
+#endregion Configuration
+
+#region DataBase
+
+/*
+ * Configure DataBase + How to call connection string configuration from appsettings.json
+*/
+builder.Services.AddDbContext<ApplicationDbContext>(cng => cng.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+#endregion DataBase
+
+#region Filters
 
 /*
  * Configure Filters
@@ -43,14 +57,9 @@ builder.Services.AddControllers(options =>
     options.Filters.Add<PermissionBasedAuthorizationFilter>();
 });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+#endregion Filters
 
-/*
- * Configure DataBase + How to call connection string configuration from appsettings.json
-*/
-builder.Services.AddDbContext<ApplicationDbContext>(cng => cng.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+#region Authentication
 
 /*
  * JWT Bearer Authentication Shceme
@@ -70,6 +79,15 @@ builder.Services.AddAuthentication().AddJwtBearer(JwtBearerDefaults.Authenticati
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SigningKey)),
     };
 });
+
+/*
+ * Basic Authentication Shceme
+*/
+//builder.Services.AddAuthentication().AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("Basic", null);
+
+#endregion Authentication
+
+#region Authorization
 
 /*
  * Policy Based Authorization
@@ -98,25 +116,22 @@ builder.Services.AddAuthorization(options =>
     });
 });
 
-/*
- * Basic Authentication Shceme
-*/
-//builder.Services.AddAuthentication().AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("Basic", null);
+#endregion Authorization
+
+builder.Services.AddControllers().AddNewtonsoftJson();
+
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-app.UseSwagger();
-app.UseSwaggerUI();
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 };
-//}
 
 app.UseHttpsRedirection();
 
