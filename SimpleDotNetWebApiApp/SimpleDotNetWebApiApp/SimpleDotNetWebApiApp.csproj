@@ -8,12 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="9.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.17" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.6" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.6">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -23,8 +24,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Dtos\" />
     <Folder Include="Services\" />
     <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SimpleDotNetWebApiApp.Application\SimpleDotNetWebApiApp.Application.csproj" />
+    <ProjectReference Include="..\SimpleDotNetWebApiApp.Domain\SimpleDotNetWebApiApp.Domain.csproj" />
+    <ProjectReference Include="..\SimpleDotNetWebApiApp.Infrastructure\SimpleDotNetWebApiApp.Infrastructure.csproj" />
+    <ProjectReference Include="..\SimpleDotNetWebApiApp.Shared\SimpleDotNetWebApiApp.Shared.csproj" />
   </ItemGroup>
 
 </Project>

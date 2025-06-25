@@ -1,106 +1,52 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SimpleDotNetWebApiApp.Data.Models;
-using SimpleDotNetWebApiApp.Data;
-using Microsoft.EntityFrameworkCore;
-using SimpleDotNetWebApiApp.Dtos;
+using MediatR;
+using SimpleDotNetWebApiApp.Application.Queries.Item;
+using SimpleDotNetWebApiApp.Application.Dtos.Item;
+using SimpleDotNetWebApiApp.Application.Commands.Item;
+using AutoMapper;
 
 namespace SimpleDotNetWebApiApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ItemsController : ControllerBase
+    public class ItemsController(IMediator mediator, IMapper mapper, ILogger<ItemsController> logger) : ControllerBase
     {
-        readonly ApplicationDbContext _dbContext;
-        readonly ILogger<ItemsController> _logger;
-
-        public ItemsController(ApplicationDbContext dbContext, ILogger<ItemsController> logger)
-        {
-            _logger = logger;
-            _dbContext = dbContext;
-        }
-
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Item>>> Get() => await _dbContext.Set<Item>().ToListAsync();
+        public async Task<ActionResult<IEnumerable<ItemDto>>> Get() => await mediator.Send(new GetItemsByCategorQuery());
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<ActionResult<Item>> Get(int id)
+        public async Task<ActionResult<ItemDto>> Get(int id)
         {
-            var record = await _dbContext.Set<Item>().FirstOrDefaultAsync(p => p.Id == id);
-
-            return record == null ? NotFound() : Ok(record);
+            return Ok(await mediator.Send(new GetItemQuery(id)));
         }
 
         [HttpGet]
         [Route("Category/{categoryId}")]
-        public async Task<ActionResult<IEnumerable<Item>>> GetByCategory(int categoryId) => await _dbContext.Set<Item>().Where(o => o.CategoryId == categoryId).ToListAsync();
+        public async Task<ActionResult<IEnumerable<ItemDto>>> GetByCategory(int categoryId) => await mediator.Send(new GetItemsByCategoryQuery(categoryId));
 
         [HttpPost]
-        public async Task<ActionResult<Item>> Create([FromForm] ItemDto item)
+        public async Task<ActionResult<ItemDto>> Create([FromBody] CreateItemCommand item)
         {
-            var record = new Item
-            {
-                Name = item.Name,
-                Price = item.Price,
-                CategoryId = item.CategoryId,
-                Note = item.Note,
-            };
-
-            if (item.Image != null)
-            {
-                using var stream = new MemoryStream();
-
-                await item.Image.CopyToAsync(stream);
-                record.Image = stream.ToArray();
-            }
-
-            await _dbContext.Set<Item>().AddAsync(record);
-            await _dbContext.SaveChangesAsync();
-
-            return Ok(record);
+            var tt = mapper.Map<CreateItemDto>(item);
+            //return Ok(await mediator.Send(new CreateItemCommand(item.Name, item.Price, item.CategoryId)));
+            return Ok(await mediator.Send(new CreateItemCommand(mapper.Map<CreateItemDto>(item))));
         }
 
         [HttpPut]
-        public async Task<ActionResult> Update([FromForm] ItemDto item)
+        public async Task<ActionResult> Update([FromForm] UpdateItemDto item)
         {
-            var record = await _dbContext.Set<Item>().FirstOrDefaultAsync(p => p.Id == item.Id);
+            var record = await mediator.Send(new UpdateItemCommand(item));
 
-            if (record == null)
-            {
-                _logger.LogDebug("Record not found #{id}", item.Id);
-                return NotFound();
-            }
+            if (record == null) NotFound();
 
-            if (item.Image != null)
-            {
-                using var stream = new MemoryStream();
-
-                await item.Image.CopyToAsync(stream);
-                record.Image = stream.ToArray();
-            }
-
-            record.Name = item.Name;
-            record.Price = item.Price;
-            record.CategoryId = item.CategoryId;
-            record.Note = item.Note;
-
-            await _dbContext.SaveChangesAsync();
-
-            return Ok();
+            return record == null ? NotFound() : Ok(record);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var record = await _dbContext.Set<Item>().FirstAsync(p => p.Id == id);
-
-            if (record == null)
-                return NotFound();
-
-            _dbContext.Set<Item>().Remove(record);
-
-            await _dbContext.SaveChangesAsync();
-
+            await mediator.Send(new DeleteItemCommand(id));
             return Ok();
         }
     }

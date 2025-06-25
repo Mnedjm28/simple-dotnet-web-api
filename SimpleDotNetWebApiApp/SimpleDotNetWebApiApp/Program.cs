@@ -4,14 +4,22 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SimpleDotNetWebApiApp;
 using SimpleDotNetWebApiApp.Authorization;
-using SimpleDotNetWebApiApp.Data;
 using SimpleDotNetWebApiApp.Filters;
 using SimpleDotNetWebApiApp.Middlewares;
 using System.Text;
-using SimpleDotNetWebApiApp.Controllers;
+using MediatR;
+using SimpleDotNetWebApiApp.Infrastructure.Data;
+using SimpleDotNetWebApiApp.Infrastructure.Contracts;
+using SimpleDotNetWebApiApp.Infrastructure.Repositories;
+using SimpleDotNetWebApiApp.Application.Validation.Item;
+using SimpleDotNetWebApiApp.Application.Handelers.Item;
+using FluentValidation;
+using SimpleDotNetWebApiApp.Shared.Mappings;
+using SimpleDotNetWebApiApp.Shared;
+using SimpleDotNetWebApiApp.Application.Behaviors;
+using SimpleDotNetWebApiApp.Application.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 #region Configuration
 
@@ -39,18 +47,14 @@ builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 
 #region DataBase
 
-/*
- * Configure DataBase + How to call connection string configuration from appsettings.json
-*/
-builder.Services.AddDbContext<ApplicationDbContext>(cng => cng.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Configure DataBase + How to call connection string configuration from appsettings.json
+builder.Services.AddDbContext<AppDbContext>(cng => cng.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 #endregion DataBase
 
 #region Filters
 
-/*
- * Configure Filters
-*/
+// Configure Filters
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<LogActivityFilter>();
@@ -61,9 +65,7 @@ builder.Services.AddControllers(options =>
 
 #region Authentication
 
-/*
- * JWT Bearer Authentication Shceme
-*/
+// JWT Bearer Authentication Shceme
 var jwtOptions = builder.Configuration.GetSection("Jwt").Get<JwtOptions>();
 builder.Services.AddSingleton(jwtOptions);
 builder.Services.AddAuthentication().AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
@@ -80,18 +82,15 @@ builder.Services.AddAuthentication().AddJwtBearer(JwtBearerDefaults.Authenticati
     };
 });
 
-/*
- * Basic Authentication Shceme
-*/
+// Basic Authentication Shceme
+
 //builder.Services.AddAuthentication().AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("Basic", null);
 
 #endregion Authentication
 
 #region Authorization
 
-/*
- * Policy Based Authorization
-*/
+// Policy Based Authorization
 builder.Services.AddSingleton<IAuthorizationHandler, AgeAuthorizationHandler>();
 builder.Services.AddAuthorization(options =>
 {
@@ -119,6 +118,15 @@ builder.Services.AddAuthorization(options =>
 #endregion Authorization
 
 builder.Services.AddControllers().AddNewtonsoftJson();
+builder.Services.AddScoped<IItemRepo, ItemRepo>();
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssembly(typeof(CreateItemHandler).Assembly);
+});
+builder.Services.AddAutoMapper(typeof(ItemProfile).Assembly);
+builder.Services.AddValidatorsFromAssemblyContaining<CreateItemCommandValidator>();
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -137,6 +145,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseMiddleware<ProfilingMiddleware>();
 app.UseMiddleware<RateLimitingMiddleware>();
 

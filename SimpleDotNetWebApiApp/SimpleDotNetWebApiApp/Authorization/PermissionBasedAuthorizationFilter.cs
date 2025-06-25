@@ -1,14 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration.UserSecrets;
-using SimpleDotNetWebApiApp.Data;
-using SimpleDotNetWebApiApp.Data.Models;
+using SimpleDotNetWebApiApp.Domain.Entities;
+using SimpleDotNetWebApiApp.Infrastructure.Data;
 using System.Security.Claims;
 
 namespace SimpleDotNetWebApiApp.Authorization
 {
-    public class PermissionBasedAuthorizationFilter(ApplicationDbContext dbContext) : IAsyncAuthorizationFilter
+    public class PermissionBasedAuthorizationFilter(AppDbContext dbContext) : IAsyncAuthorizationFilter
     {
         async Task IAsyncAuthorizationFilter.OnAuthorizationAsync(AuthorizationFilterContext context)
         {

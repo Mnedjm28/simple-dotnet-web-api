@@ -1,5 +1,4 @@
-﻿using SimpleDotNetWebApiApp.Data.Models;
-using System.Security;
+﻿using SimpleDotNetWebApiApp.Domain.Entities;
 
 namespace SimpleDotNetWebApiApp.Authorization
 {

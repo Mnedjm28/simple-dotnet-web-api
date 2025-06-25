@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using SimpleDotNetWebApiApp.Data;
-using SimpleDotNetWebApiApp.Data.Models;
+using SimpleDotNetWebApiApp.Domain.Entities;
+using SimpleDotNetWebApiApp.Infrastructure.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -10,7 +10,7 @@ namespace SimpleDotNetWebApiApp.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UsersController(JwtOptions jwtOptions, ApplicationDbContext dbContext) : ControllerBase
+    public class UsersController(JwtOptions jwtOptions, AppDbContext dbContext) : ControllerBase
     {
         [HttpPost]
         [Route("login")]
