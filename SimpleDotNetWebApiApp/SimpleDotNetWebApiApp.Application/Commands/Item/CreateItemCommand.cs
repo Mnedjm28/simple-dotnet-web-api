@@ -1,8 +1,8 @@
 ﻿using MediatR;
-using SimpleDotNetWebApiApp.Application.Dtos.Item;
+using Microsoft.AspNetCore.Http;
+using SimpleDotNetWebApiApp.Application.Dtos;
 
 namespace SimpleDotNetWebApiApp.Application.Commands.Item
 {
-    //public record CreateItemCommand(string? Name, double Price, int CategoryId) : IRequest<CreateItemDto>;
-    public record CreateItemCommand(CreateItemDto Item) : IRequest<CreateItemDto>;
+    public record CreateItemCommand(string? Name, double Price, string? Note, IFormFile? Image, int CategoryId) : IRequest<ItemDto>;
 }

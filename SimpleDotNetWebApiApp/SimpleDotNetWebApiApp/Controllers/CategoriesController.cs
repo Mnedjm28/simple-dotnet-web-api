@@ -1,86 +1,44 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
+﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using SimpleDotNetWebApiApp.Domain.Entities;
-using SimpleDotNetWebApiApp.Infrastructure.Data;
+using SimpleDotNetWebApiApp.Application.Commands.Category;
+using SimpleDotNetWebApiApp.Application.Dtos;
+using SimpleDotNetWebApiApp.Application.Queries.Category;
 
 namespace SimpleDotNetWebApiApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoriesController(AppDbContext dbContext, ILogger<CategoriesController> logger) : ControllerBase
+    public class CategoriesController(IMediator mediator, IMapper mapper, ILogger<ItemsController> logger) : ControllerBase
     {
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Category>>> Get() => await dbContext.Set<Category>().ToListAsync();
+        public async Task<ActionResult<IEnumerable<CategoryDto>>> Get() => await mediator.Send(new GetCategoriesQuery());
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<ActionResult<Category>> Get(int id)
+        public async Task<ActionResult<CategoryDto>> Get(int id)
         {
-            var record = await dbContext.Set<Category>().FirstOrDefaultAsync(p => p.Id == id);
-
-            return record == null ? NotFound() : Ok(record);
+            return Ok(await mediator.Send(new GetCategoryQuery(id)));
         }
 
         [HttpPost]
-        public async Task<ActionResult<Category>> Create(Category category)
+        public async Task<ActionResult<CategoryDto>> Create([FromForm] CreateCategoryCommand item)
         {
-            var record = await dbContext.Set<Category>().AddAsync(category);
-
-            await dbContext.SaveChangesAsync();
-
-            return Ok(record.Entity);
+            return Ok(await mediator.Send(new CreateCategoryCommand(item.Name, item.Note)));
         }
 
         [HttpPut]
-        public async Task<ActionResult> Update(Category category)
+        public async Task<ActionResult> Update([FromForm] UpdateCategoryCommand item)
         {
-            var record = await dbContext.Set<Category>().FirstOrDefaultAsync(p => p.Id == category.Id);
+            var record = await mediator.Send(new UpdateCategoryCommand(item.Id, item.Name, item.Note));
 
-            if (record == null)
-            {
-                logger.LogDebug("Record not found #{id}", category.Id);
-                return NotFound();
-            }
-
-            record.Name = category.Name;
-            record.Note = category.Note;
-
-            await dbContext.SaveChangesAsync();
-
-            return Ok();
-        }
-
-        [HttpPatch("{id}")]
-        public async Task<ActionResult> Update([FromRoute] int id, [FromBody] JsonPatchDocument<Category> category)
-        {
-            var record = await dbContext.Set<Category>().FirstOrDefaultAsync(p => p.Id == id);
-
-            if (record == null)
-            {
-                logger.LogDebug("Record not found #{id}", id);
-                return NotFound();
-            }
-
-            category.ApplyTo(record);
-
-            await dbContext.SaveChangesAsync();
-
-            return Ok();
+            return record == null ? NotFound() : Ok(record);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var record = await dbContext.Set<Category>().FirstAsync(p => p.Id == id);
-
-            if (record == null)
-                return NotFound();
-
-            dbContext.Set<Category>().Remove(record);
-
-            await dbContext.SaveChangesAsync();
-
+            await mediator.Send(new DeleteCategoryCommand(id));
             return Ok();
         }
     }

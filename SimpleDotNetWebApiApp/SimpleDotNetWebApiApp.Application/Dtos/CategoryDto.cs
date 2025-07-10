@@ -1,7 +1,6 @@
-﻿using SimpleDotNetWebApiApp.Application.Dtos.Item;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace SimpleDotNetWebApiApp.Application.Dtos.Category
+namespace SimpleDotNetWebApiApp.Application.Dtos
 {
     public class CategoryDto
     {

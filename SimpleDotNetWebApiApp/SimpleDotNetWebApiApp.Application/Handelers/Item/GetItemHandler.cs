@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
-using SimpleDotNetWebApiApp.Application.Dtos.Item;
+using SimpleDotNetWebApiApp.Application.Dtos;
 using SimpleDotNetWebApiApp.Application.Queries.Item;
 using SimpleDotNetWebApiApp.Infrastructure.Contracts;
 

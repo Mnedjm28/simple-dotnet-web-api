@@ -4,7 +4,7 @@ using SimpleDotNetWebApiApp.Infrastructure.Contracts;
 
 namespace SimpleDotNetWebApiApp.Application.Handelers.Item
 {
-    public class DeleteItemHandler(IItemRepo _itemRepo) : IRequestHandler<DeleteItemCommand>
+    public class DeleteCategoryHandler(IItemRepo _itemRepo) : IRequestHandler<DeleteItemCommand>
     {
         public async Task Handle(DeleteItemCommand request, CancellationToken cancellationToken)
         {

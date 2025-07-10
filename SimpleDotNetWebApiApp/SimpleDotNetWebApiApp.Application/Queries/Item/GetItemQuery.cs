@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using SimpleDotNetWebApiApp.Application.Dtos.Item;
+using SimpleDotNetWebApiApp.Application.Dtos;
 
 namespace SimpleDotNetWebApiApp.Application.Queries.Item
 {

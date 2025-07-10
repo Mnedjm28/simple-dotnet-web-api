@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace SimpleDotNetWebApiApp.Application.Dtos.Item
+namespace SimpleDotNetWebApiApp.Application.Dtos
 {
-    public class CreateItemDto
+    public class ItemDto
     {
-        public string? Name { get; set; }
+        public int Id { get; set; }
+
+        public required string Name { get; set; }
 
         public double Price { get; set; }
 

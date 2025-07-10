@@ -119,6 +119,7 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddScoped<IItemRepo, ItemRepo>();
+builder.Services.AddScoped<ICategoryRepo, CategoryRepo>();
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssembly(typeof(CreateItemHandler).Assembly);

@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using SimpleDotNetWebApiApp.Domain.Entities;
 using SimpleDotNetWebApiApp.Infrastructure.Contracts;
 using SimpleDotNetWebApiApp.Infrastructure.Data;
@@ -13,7 +12,7 @@ namespace SimpleDotNetWebApiApp.Infrastructure.Repositories
 
         public Task<List<Item>> GetItemsByCategory(int categoryId) => dbContext.Set<Item>().Where(o => o.CategoryId == categoryId).ToListAsync();
 
-        public async Task<Item> GetItem(int id) =>  await dbContext.Set<Item>().FirstOrDefaultAsync(p => p.Id == id) ?? throw new NotFoundException("Item", id);
+        public async Task<Item> GetItem(int id) => await dbContext.Set<Item>().FirstOrDefaultAsync(p => p.Id == id) ?? throw new NotFoundException("Item", id);
 
         public async Task<Item> CreateItem(Item item)
         {
@@ -23,15 +22,17 @@ namespace SimpleDotNetWebApiApp.Infrastructure.Repositories
             return item;
         }
 
-        public async Task<Item> UpdateItem(Item item)
+        public async Task<Item> UpdateItem(Item item, bool ignoreImage = false)
         {
-            var record = await GetItem(item.Id);         
+            var record = await GetItem(item.Id);
 
             record.Name = item.Name;
             record.Price = item.Price;
             record.CategoryId = item.CategoryId;
             record.Note = item.Note;
 
+            if (!ignoreImage)
+                record.Image = item.Image;
 
             await dbContext.SaveChangesAsync();
             return item;

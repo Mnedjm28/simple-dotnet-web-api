@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using SimpleDotNetWebApiApp.Application.Commands.Item;
-using SimpleDotNetWebApiApp.Application.Dtos.Item;
+using SimpleDotNetWebApiApp.Application.Dtos;
 using SimpleDotNetWebApiApp.Domain.Entities;
 
 namespace SimpleDotNetWebApiApp.Shared.Mappings
@@ -9,19 +9,28 @@ namespace SimpleDotNetWebApiApp.Shared.Mappings
     {
         public ItemProfile()
         {
-            CreateMap<CreateItemDto, Item>();
-            CreateMap<Item, CreateItemDto>();
-            CreateMap<CreateItemCommand, CreateItemDto>()
-                .ForMember(x => x.Name,
-                            m => m.MapFrom(a => a.Item.Name))
-                .ForMember(x => x.CategoryId,
-                            m => m.MapFrom(a => a.Item.CategoryId))
-                .ForMember(x => x.Note,
-                            m => m.MapFrom(a => a.Item.Note))
-                .ForMember(x => x.Price,
-                            m => m.MapFrom(a => a.Item.Price));
-            CreateMap<UpdateItemDto, Item>();
-            CreateMap<Item, UpdateItemDto>();
+            CreateMap<Item, ItemDto>().ForMember(dest => dest.Image, opt => opt.Ignore());
+            CreateMap<CreateItemCommand, Item>()
+                .ForMember(d => d.Name,
+                            s => s.MapFrom(a => a.Name))
+                .ForMember(d => d.CategoryId,
+                            s => s.MapFrom(a => a.CategoryId))
+                .ForMember(d => d.Note,
+                            s => s.MapFrom(a => a.Note))
+                .ForMember(d => d.Price,
+                            s => s.MapFrom(a => a.Price))
+                .ForMember(d => d.Image, s => s.Ignore());
+
+            CreateMap<UpdateItemCommand, Item>()
+                .ForMember(d => d.Name,
+                            s => s.MapFrom(a => a.Name))
+                .ForMember(d => d.CategoryId,
+                            s => s.MapFrom(a => a.CategoryId))
+                .ForMember(d => d.Note,
+                            s => s.MapFrom(a => a.Note))
+                .ForMember(d => d.Price,
+                            s => s.MapFrom(a => a.Price))
+                .ForMember(d => d.Image, s => s.Ignore());
         }
     }
 }

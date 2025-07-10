@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using SimpleDotNetWebApiApp.Application.Queries.Item;
-using SimpleDotNetWebApiApp.Application.Dtos.Item;
 using SimpleDotNetWebApiApp.Application.Commands.Item;
 using AutoMapper;
+using SimpleDotNetWebApiApp.Application.Dtos;
 
 namespace SimpleDotNetWebApiApp.Controllers
 {
@@ -26,19 +26,15 @@ namespace SimpleDotNetWebApiApp.Controllers
         public async Task<ActionResult<IEnumerable<ItemDto>>> GetByCategory(int categoryId) => await mediator.Send(new GetItemsByCategoryQuery(categoryId));
 
         [HttpPost]
-        public async Task<ActionResult<ItemDto>> Create([FromBody] CreateItemCommand item)
+        public async Task<ActionResult<ItemDto>> Create([FromForm] CreateItemCommand item)
         {
-            var tt = mapper.Map<CreateItemDto>(item);
-            //return Ok(await mediator.Send(new CreateItemCommand(item.Name, item.Price, item.CategoryId)));
-            return Ok(await mediator.Send(new CreateItemCommand(mapper.Map<CreateItemDto>(item))));
+            return Ok(await mediator.Send(new CreateItemCommand(item.Name, item.Price, item.Note, item.Image, item.CategoryId)));
         }
 
         [HttpPut]
-        public async Task<ActionResult> Update([FromForm] UpdateItemDto item)
+        public async Task<ActionResult> Update([FromForm] UpdateItemCommand item)
         {
-            var record = await mediator.Send(new UpdateItemCommand(item));
-
-            if (record == null) NotFound();
+            var record = await mediator.Send(new UpdateItemCommand(item.Id, item.Name, item.Price, item.Note, item.Image, item.CategoryId, item.IgnoreImage));
 
             return record == null ? NotFound() : Ok(record);
         }
