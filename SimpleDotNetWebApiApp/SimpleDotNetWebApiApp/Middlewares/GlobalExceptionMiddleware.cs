@@ -1,8 +1,6 @@
 ﻿using FluentValidation;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using SimpleDotNetWebApiApp.Application.Helpers;
 using SimpleDotNetWebApiApp.Infrastructure.Exceptions;
 using System.Net;
