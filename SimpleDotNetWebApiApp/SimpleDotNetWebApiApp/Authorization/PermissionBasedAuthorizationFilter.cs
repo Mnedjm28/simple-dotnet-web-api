@@ -7,7 +7,7 @@ using System.Security.Claims;
 
 namespace SimpleDotNetWebApiApp.Authorization
 {
-    public class PermissionBasedAuthorizationFilter(AppDbContext dbContext) : IAsyncAuthorizationFilter
+    public class PermissionBasedAuthorizationFilter(GeneralAppDbContext dbContext) : IAsyncAuthorizationFilter
     {
         async Task IAsyncAuthorizationFilter.OnAuthorizationAsync(AuthorizationFilterContext context)
         {

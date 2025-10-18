@@ -10,7 +10,7 @@ namespace SimpleDotNetWebApiApp.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UsersController(JwtOptions jwtOptions, AppDbContext dbContext) : ControllerBase
+    public class UsersController(JwtOptions jwtOptions, GeneralAppDbContext dbContext) : ControllerBase
     {
         [HttpPost]
         [Route("login")]

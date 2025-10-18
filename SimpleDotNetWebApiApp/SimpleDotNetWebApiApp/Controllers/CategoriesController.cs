@@ -24,7 +24,7 @@ namespace SimpleDotNetWebApiApp.Controllers
         [HttpPost]
         public async Task<ActionResult<CategoryDto>> Create([FromForm] CreateCategoryCommand item)
         {
-            return Ok(await mediator.Send(new CreateCategoryCommand(item.Name, item.Note)));
+            return Ok(await mediator.Send(item));
         }
 
         [HttpPut]

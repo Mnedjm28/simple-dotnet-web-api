@@ -9,15 +9,15 @@ using SimpleDotNetWebApiApp.Middlewares;
 using System.Text;
 using MediatR;
 using SimpleDotNetWebApiApp.Infrastructure.Data;
-using SimpleDotNetWebApiApp.Infrastructure.Contracts;
 using SimpleDotNetWebApiApp.Infrastructure.Repositories;
 using SimpleDotNetWebApiApp.Application.Validation.Item;
-using SimpleDotNetWebApiApp.Application.Handelers.Item;
 using FluentValidation;
 using SimpleDotNetWebApiApp.Shared.Mappings;
 using SimpleDotNetWebApiApp.Shared;
 using SimpleDotNetWebApiApp.Application.Behaviors;
 using SimpleDotNetWebApiApp.Application.Middleware;
+using SimpleDotNetWebApiApp.Infrastructure.Contracts;
+using SimpleDotNetWebApiApp.Application.Handelers.Category;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,10 +45,12 @@ builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 
 #endregion Configuration
 
-#region DataBase
+#region Database
 
 // Configure DataBase + How to call connection string configuration from appsettings.json
-builder.Services.AddDbContext<AppDbContext>(cng => cng.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<GeneralAppDbContext>(cng => cng.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<ReadAppDbContext>(cng => cng.UseSqlServer(builder.Configuration.GetConnectionString("ReadConnection")));
+builder.Services.AddDbContext<WriteAppDbContext>(cng => cng.UseSqlServer(builder.Configuration.GetConnectionString("WriteConnection")));
 
 #endregion DataBase
 
@@ -118,14 +120,16 @@ builder.Services.AddAuthorization(options =>
 #endregion Authorization
 
 builder.Services.AddControllers().AddNewtonsoftJson();
+builder.Services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>));
 builder.Services.AddScoped<IItemRepo, ItemRepo>();
-builder.Services.AddScoped<ICategoryRepo, CategoryRepo>();
+builder.Services.AddScoped<IReadCategoryRepo, ReadCategoryRepo>();
+builder.Services.AddScoped<IWriteCategoryRepo, WriteCategoryRepo>();
 builder.Services.AddMediatR(cfg =>
 {
-    cfg.RegisterServicesFromAssembly(typeof(CreateItemHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(CreateCategoryHandler).Assembly);
 });
 builder.Services.AddAutoMapper(typeof(ItemProfile).Assembly);
-builder.Services.AddValidatorsFromAssemblyContaining<CreateItemCommandValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateCategoryCommandValidator>();
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 
@@ -151,5 +155,14 @@ app.UseMiddleware<ProfilingMiddleware>();
 app.UseMiddleware<RateLimitingMiddleware>();
 
 app.MapControllers();
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var dbContext = services.GetRequiredService<GeneralAppDbContext>();
+    dbContext.Database.Migrate();
+}
 
 app.Run();

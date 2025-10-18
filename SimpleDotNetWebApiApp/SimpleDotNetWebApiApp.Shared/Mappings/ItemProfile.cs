@@ -10,6 +10,10 @@ namespace SimpleDotNetWebApiApp.Shared.Mappings
         public ItemProfile()
         {
             CreateMap<Item, ItemDto>().ForMember(dest => dest.Image, opt => opt.Ignore());
+            CreateMap<ItemDto, Item>().ForMember(dest => dest.Image, opt => opt.Ignore());
+            CreateMap<Item, UpdateItemDto>().ForMember(dest => dest.Image, opt => opt.Ignore());
+            CreateMap<UpdateItemDto, Item>().ForMember(dest => dest.Image, opt => opt.Ignore());
+
             CreateMap<CreateItemCommand, Item>()
                 .ForMember(d => d.Name,
                             s => s.MapFrom(a => a.Name))

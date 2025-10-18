@@ -4,7 +4,7 @@ using SimpleDotNetWebApiApp.Infrastructure.Contracts;
 
 namespace SimpleDotNetWebApiApp.Application.Handelers.Category
 {
-    public class DeleteCategoryHandler(ICategoryRepo _categoryRepo) : IRequestHandler<DeleteCategoryCommand>
+    public class DeleteCategoryHandler(IWriteCategoryRepo _categoryRepo) : IRequestHandler<DeleteCategoryCommand>
     {
         public async Task Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
         {

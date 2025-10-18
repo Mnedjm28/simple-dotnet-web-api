@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
 using SimpleDotNetWebApiApp.Application.Commands.Category;
-using SimpleDotNetWebApiApp.Application.Dtos;
 using SimpleDotNetWebApiApp.Infrastructure.Contracts;
+using SimpleDotNetWebApiApp.Application.Dtos;
 
 namespace SimpleDotNetWebApiApp.Application.Handelers.Category
 {
-    public class UpdateCategoryHandler(ICategoryRepo _categoryRepo, IMapper _mapper) : IRequestHandler<UpdateCategoryCommand, CategoryDto>
+    public class UpdateCategoryHandler(IWriteCategoryRepo _categoryRepo, IMapper _mapper) : IRequestHandler<UpdateCategoryCommand, CategoryDto>
     {
         public async Task<CategoryDto> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
         {

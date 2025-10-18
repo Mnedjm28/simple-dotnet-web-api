@@ -2,29 +2,22 @@
 using SimpleDotNetWebApiApp.Domain.Entities;
 using SimpleDotNetWebApiApp.Infrastructure.Contracts;
 using SimpleDotNetWebApiApp.Infrastructure.Data;
-using SimpleDotNetWebApiApp.Infrastructure.Exceptions;
 
 namespace SimpleDotNetWebApiApp.Infrastructure.Repositories
 {
-    public class ItemRepo(AppDbContext dbContext) : IItemRepo
+    public class ItemRepo : GenericRepo<Item>, IItemRepo
     {
-        public Task<List<Item>> GetItems() => dbContext.Set<Item>().ToListAsync();
+        protected readonly GeneralAppDbContext _dbContext;
 
-        public Task<List<Item>> GetItemsByCategory(int categoryId) => dbContext.Set<Item>().Where(o => o.CategoryId == categoryId).ToListAsync();
-
-        public async Task<Item> GetItem(int id) => await dbContext.Set<Item>().FirstOrDefaultAsync(p => p.Id == id) ?? throw new NotFoundException("Item", id);
-
-        public async Task<Item> CreateItem(Item item)
+        public ItemRepo(GeneralAppDbContext dbContext) : base(dbContext)
         {
-            await dbContext.Set<Item>().AddAsync(item);
-            await dbContext.SaveChangesAsync();
-
-            return item;
         }
 
-        public async Task<Item> UpdateItem(Item item, bool ignoreImage = false)
+        public Task<List<Item>> GetItemsByCategoryAsync(int categoryId) => _dbContext.Set<Item>().Where(o => o.CategoryId == categoryId).ToListAsync();
+
+        public async Task<Item> UpdateAsync(Item item, bool ignoreImage = false)
         {
-            var record = await GetItem(item.Id);
+            var record = await GetByIdAsync(item.Id);
 
             record.Name = item.Name;
             record.Price = item.Price;
@@ -34,19 +27,13 @@ namespace SimpleDotNetWebApiApp.Infrastructure.Repositories
             if (!ignoreImage)
                 record.Image = item.Image;
 
-            await dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return item;
         }
 
-        public async Task DeleteItem(int id)
+        public override Task<Item> UpdateAsync(Item entity)
         {
-            var item = await GetItem(id);
-
-            if (item == null) return;
-
-            dbContext.Set<Item>().Remove(item);
-
-            await dbContext.SaveChangesAsync();
+            throw new NotImplementedException();
         }
     }
 }

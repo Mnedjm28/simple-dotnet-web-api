@@ -1,17 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SimpleDotNetWebApiApp.Domain.Entities;
-using SimpleDotNetWebApiApp.Infrastructure.Contracts;
 using SimpleDotNetWebApiApp.Infrastructure.Data;
 using SimpleDotNetWebApiApp.Infrastructure.Exceptions;
+using SimpleDotNetWebApiApp.Infrastructure.Contracts;
 
 namespace SimpleDotNetWebApiApp.Infrastructure.Repositories
 {
-    public class CategoryRepo(AppDbContext dbContext) : ICategoryRepo
+    public class WriteCategoryRepo(WriteAppDbContext dbContext) : IWriteCategoryRepo
     {
-        public Task<List<Category>> GetCategories() => dbContext.Set<Category>().ToListAsync();
-
-        public async Task<Category> GetCategory(int id) => await dbContext.Set<Category>().FirstOrDefaultAsync(p => p.Id == id) ?? throw new NotFoundException("Category", id);
-
         public async Task<Category> CreateCategory(Category category)
         {
             await dbContext.Set<Category>().AddAsync(category);
@@ -22,7 +18,7 @@ namespace SimpleDotNetWebApiApp.Infrastructure.Repositories
 
         public async Task<Category> UpdateCategory(Category category)
         {
-            var record = await GetCategory(category.Id);
+            var record = await dbContext.Set<Category>().FirstOrDefaultAsync(p => p.Id == category.Id) ?? throw new NotFoundException("Category", category.Id);
 
             record.Name = category.Name;
             record.Note = category.Note;
@@ -33,7 +29,7 @@ namespace SimpleDotNetWebApiApp.Infrastructure.Repositories
 
         public async Task DeleteCategory(int id)
         {
-            var category = await GetCategory(id);
+            var category = await dbContext.Set<Category>().FirstOrDefaultAsync(p => p.Id == id) ?? throw new NotFoundException("Category", id);
 
             if (category == null) return;
 

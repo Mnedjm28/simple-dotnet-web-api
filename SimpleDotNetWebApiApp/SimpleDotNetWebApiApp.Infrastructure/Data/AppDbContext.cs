@@ -3,12 +3,13 @@ using SimpleDotNetWebApiApp.Domain.Entities;
 
 namespace SimpleDotNetWebApiApp.Infrastructure.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext<T> : DbContext where T : DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-        {
+        public AppDbContext(DbContextOptions<T> options) : base(options) { }
 
-        }
+        //public AppDbContext(DbContextOptions options) : base(options)
+        //{
+        //}
 
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
