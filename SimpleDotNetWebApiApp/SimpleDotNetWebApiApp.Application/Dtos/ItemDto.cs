@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace SimpleDotNetWebApiApp.Application.Dtos
 {
     public class ItemDto
     {
+        [SwaggerIgnore]
         public int Id { get; set; }
 
         public required string Name { get; set; }

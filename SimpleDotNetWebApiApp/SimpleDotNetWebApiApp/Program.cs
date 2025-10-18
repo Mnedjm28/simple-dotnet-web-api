@@ -18,6 +18,7 @@ using SimpleDotNetWebApiApp.Application.Behaviors;
 using SimpleDotNetWebApiApp.Application.Middleware;
 using SimpleDotNetWebApiApp.Infrastructure.Contracts;
 using SimpleDotNetWebApiApp.Application.Handelers.Category;
+using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -120,6 +121,7 @@ builder.Services.AddAuthorization(options =>
 #endregion Authorization
 
 builder.Services.AddControllers().AddNewtonsoftJson();
+builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>));
 builder.Services.AddScoped<IItemRepo, ItemRepo>();
 builder.Services.AddScoped<IReadCategoryRepo, ReadCategoryRepo>();

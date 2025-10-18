@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace SimpleDotNetWebApiApp.Application.Dtos
+﻿namespace SimpleDotNetWebApiApp.Application.Dtos
 {
     public class CategoryDto
     {

@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
 using SimpleDotNetWebApiApp.Application.Commands.Category;
 
-namespace SimpleDotNetWebApiApp.Application.Validation.Item
+namespace SimpleDotNetWebApiApp.Application.Validation.Category
 {
-    public class CreateCategoryCommandValidator : AbstractValidator<CreateCategoryCommand>
+    public class UpdateCategoryCommandValidator : AbstractValidator<UpdateCategoryCommand>
     {
-        public CreateCategoryCommandValidator()
+        public UpdateCategoryCommandValidator()
         {
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("Name is required.")
