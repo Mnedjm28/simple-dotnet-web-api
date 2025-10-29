@@ -12,7 +12,7 @@ using SimpleDotNetWebApiApp.Infrastructure.Data;
 namespace SimpleDotNetWebApiApp.Infrastructure.Migrations
 {
     [DbContext(typeof(GeneralAppDbContext))]
-    [Migration("20250905151808_firstInitial")]
+    [Migration("20251029132325_firstInitial")]
     partial class firstInitial
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace SimpleDotNetWebApiApp.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.6")
+                .HasAnnotation("ProductVersion", "9.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -112,6 +112,7 @@ namespace SimpleDotNetWebApiApp.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Price")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<double>("Quantity")
@@ -140,7 +141,7 @@ namespace SimpleDotNetWebApiApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
 
                     b.HasData(
                         new
@@ -183,7 +184,7 @@ namespace SimpleDotNetWebApiApp.Infrastructure.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("SimpleDotNetWebApiApp.Domain.Entities.UserPermission", b =>
@@ -199,7 +200,7 @@ namespace SimpleDotNetWebApiApp.Infrastructure.Migrations
 
                     b.HasKey("UserId", "PermissionId");
 
-                    b.ToTable("UserPermissions", (string)null);
+                    b.ToTable("UserPermissions");
                 });
 
             modelBuilder.Entity("SimpleDotNetWebApiApp.Domain.Entities.Item", b =>

@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SimpleDotNetWebApiApp.Domain.Entities;
+using SimpleDotNetWebApiApp.Infrastructure.Data.Config;
+using System;
 
 namespace SimpleDotNetWebApiApp.Infrastructure.Data
 {
@@ -23,20 +25,7 @@ namespace SimpleDotNetWebApiApp.Infrastructure.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<User>().ToTable("Users");
-            modelBuilder.Entity<UserPermission>().ToTable("UserPermissions").HasKey(o => new { o.UserId, o.PermissionId });
-
-            modelBuilder.Entity<Role>().ToTable("Roles")
-                                       .HasMany(e => e.Users)
-                                       .WithOne(e => e.Role)
-                                       .HasForeignKey(e => e.RoleId)
-                                       .IsRequired();
-
-            modelBuilder.Entity<Role>().HasData(
-                new Role { Id = (int)RoleEnum.Admin, Name = "Admin" },
-                new Role { Id = (int)RoleEnum.User, Name = "User" },
-                new Role { Id = (int)RoleEnum.Guest, Name = "Guest" }
-                );
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ItemConfiguration).Assembly);
         }
     }
 }
