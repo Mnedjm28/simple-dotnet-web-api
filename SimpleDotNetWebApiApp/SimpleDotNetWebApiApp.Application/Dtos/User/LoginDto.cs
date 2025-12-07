@@ -1,6 +1,6 @@
-﻿namespace SimpleDotNetWebApiApp.Controllers
+﻿namespace SimpleDotNetWebApiApp.Application.Dtos.User
 {
-    public class AuthenticationRequestModel
+    public class LoginDto
     {
         public string Username { get; set; }
 

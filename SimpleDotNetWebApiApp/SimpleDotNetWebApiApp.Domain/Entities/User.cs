@@ -12,6 +12,8 @@ namespace SimpleDotNetWebApiApp.Domain.Entities
 
         public required string Password { get; set; }
 
+        public required string Email { get; set; }
+
         [ForeignKey(nameof(Role))]
         public int RoleId { get; set; }
 

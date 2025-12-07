@@ -19,6 +19,7 @@ namespace SimpleDotNetWebApiApp.Extensions
 
             services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>));
             services.AddScoped<IItemRepo, ItemRepo>();
+            services.AddScoped<IUserRepo, UserRepo>();
             services.AddScoped<IReadCategoryRepo, ReadCategoryRepo>();
             services.AddScoped<IWriteCategoryRepo, WriteCategoryRepo>();
 
